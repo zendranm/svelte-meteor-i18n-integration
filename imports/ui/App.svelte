@@ -1,22 +1,34 @@
 <script>
-  let counter = 0;
-  const addToCounter = () => {
-    counter += 1;
-  }
-</script>
+  import { t, locale } from "../utils/i18n";
+  import { i18n } from "meteor/universe:i18n";
 
+  const setLanguage = (language) => {
+    locale.set(language);
+  };
+
+  $: console.log(i18n.getTranslations("", "es"));
+  $: console.log("i18n._translations: ", i18n._translations);
+</script>
 
 <div class="container">
   <h1>Welcome to Meteor!</h1>
+  <button on:click={() => setLanguage("en-US")}>EN</button>
+  <button on:click={() => setLanguage("es-ES")}>ESP</button>
+  <button
+    on:click={() => {
+      i18n.loadLocale("es", { fresh: true });
+      console.log(i18n._translations);
+    }}>Get Locale</button
+  >
 
-  <button on:click={addToCounter}>Click Me</button>
-  <p>You've pressed the button {counter} times.</p>
-
-  <h2>Learn Meteor!</h2>
-  <ul>
-    <li><a href="https://svelte-tutorial.meteor.com/" target="_blank">Do the Tutorial</a></li>
-    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
-    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
-    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
-  </ul>
+  <div>
+    Locale: {$locale}
+    <br />
+    hi: {$t("hi")}
+    <br />
+    ok: {$t("ok")}
+    <br />
+    apple: {$t("apple")}
+  </div>
+  <br />
 </div>
