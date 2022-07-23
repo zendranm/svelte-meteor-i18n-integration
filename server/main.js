@@ -1,20 +1,22 @@
 import { Meteor } from "meteor/meteor";
+import { Promise as MeteorPromise } from "meteor/promise";
 import { Translations } from "../imports/api/TranslationsCollection";
 import { i18n } from "meteor/universe:i18n";
+import { isEqual } from "lodash-es";
 import "../imports/locales/en.i18n.yml";
 import "../imports/locales/es.i18n.yml";
 
 const en = {
   en: {
-    apple: "apple",
-    dog: "dog",
+    apple: "Apple",
+    dog: "Dog",
   },
 };
 
 const es = {
   es: {
-    apple: "manzana",
-    dog: "perro",
+    apple: "Manzana",
+    dog: "Perro",
   },
 };
 
@@ -31,4 +33,53 @@ Meteor.startup(() => {
   if (Translations.find().count() === 0) {
     [en, es].forEach(insertTranslation);
   }
+});
+
+function syncify(fn) {
+  return function syncified() {
+    const result = fn();
+    if (result) {
+      MeteorPromise.await(result);
+    }
+  };
+}
+
+function onStartupAsync(fn) {
+  Meteor.startup(() => {
+    Meteor.defer(syncify(fn));
+  });
+}
+
+function refresh(locale, { translations = {}, updatedAt = new Date() }) {
+  locale = i18n.normalize(locale);
+  i18n._translations[locale] = translations;
+
+  const cache = i18n.getCache(locale);
+  cache.updatedAt = updatedAt.toUTCString();
+  delete cache._json;
+  delete cache._yml;
+  i18n._emitChange(locale);
+}
+
+const mergeTranslations = (baseTranslations, translation) => {
+  return Object.assign(translation, baseTranslations);
+};
+
+onStartupAsync(() => {
+  const updatedAt = new Date();
+
+  for (const [_id, translations] of Object.entries(i18n._translations)) {
+    const inDB = Translations.findOne({ _id: _id });
+    const merged = mergeTranslations(inDB.translations, translations);
+
+    if (!isEqual(merged, inDB)) {
+      Translations.update(inDB._id, {
+        $set: {
+          translations: merged,
+          updatedAt,
+        },
+      });
+    }
+  }
+  Translations.find().observeChanges({ added: refresh, changed: refresh });
 });

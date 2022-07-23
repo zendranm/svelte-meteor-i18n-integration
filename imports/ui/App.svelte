@@ -5,9 +5,6 @@
   const setLanguage = (language) => {
     locale.set(language);
   };
-
-  $: console.log(i18n.getTranslations("", "es"));
-  $: console.log("i18n._translations: ", i18n._translations);
 </script>
 
 <div class="container">
