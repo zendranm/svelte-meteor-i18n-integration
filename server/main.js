@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Promise as MeteorPromise } from "meteor/promise";
 import { Translations } from "../imports/api/TranslationsCollection";
+import { Timestamp } from "../imports/api/TimestampCollection";
 import { i18n } from "meteor/universe:i18n";
 import { isEqual } from "lodash-es";
 import "../imports/locales/en.i18n.yml";
@@ -59,6 +60,7 @@ function refresh(locale, { translations = {}, updatedAt = new Date() }) {
   delete cache._json;
   delete cache._yml;
   i18n._emitChange(locale);
+  Timestamp.upsert({}, { updatedAt });
 }
 
 const mergeTranslations = (baseTranslations, translation) => {
