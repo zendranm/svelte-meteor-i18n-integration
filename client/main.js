@@ -14,14 +14,12 @@ let timestamp;
 Tracker.autorun(() => {
   Meteor.subscribe("timestamp");
   const newTimestamp = Timestamp.find({}).fetch()[0]?.updatedAt;
-  console.log(newTimestamp);
 
   if (timestamp !== undefined && timestamp !== newTimestamp) {
-    const locale = i18n.getLocale();
-    console.log("locale: ", locale);
+    let locale = i18n.getLocale();
+
     if (locale) {
-      i18n.loadLocale("es", { fresh: true });
-      console.log(i18n._translations);
+      i18n.loadLocale(locale, { fresh: true });
     }
   }
   timestamp = newTimestamp;

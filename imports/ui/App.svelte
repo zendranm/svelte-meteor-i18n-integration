@@ -9,8 +9,8 @@
 
 <div class="container">
   <h1>Welcome to Meteor!</h1>
-  <button on:click={() => setLanguage("en-US")}>EN</button>
-  <button on:click={() => setLanguage("es-ES")}>ESP</button>
+  <button on:click={() => setLanguage("en")}>EN</button>
+  <button on:click={() => setLanguage("es")}>ESP</button>
   <button
     on:click={() => {
       i18n.loadLocale("es", { fresh: true });
