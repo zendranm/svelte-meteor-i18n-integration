@@ -1,9 +1,9 @@
 <script>
-  import { t, locale } from "../utils/i18n";
+  import { t, locale, reactiveLocale } from "../utils/i18n";
   import { i18n } from "meteor/universe:i18n";
 
   const setLanguage = (language) => {
-    locale.set(language);
+    reactiveLocale.set(language);
   };
 </script>
 

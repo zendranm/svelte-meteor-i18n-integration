@@ -10,7 +10,6 @@ function createLocale() {
     subscribe,
     set: (lng) => {
       i18n.setLocale(lng);
-      reactiveLocale.set(lng);
       return set(lng);
     },
   };

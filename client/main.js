@@ -3,7 +3,7 @@ import App from "../imports/ui/App.svelte";
 import { Tracker } from "meteor/tracker";
 import { Timestamp } from "../imports/api/TimestampCollection";
 import { i18n } from "meteor/universe:i18n";
-import { reactiveLocale } from "../imports/utils/i18n";
+import { reactiveLocale, locale as storeLocale } from "../imports/utils/i18n";
 
 Meteor.startup(() => {
   new App({
@@ -12,7 +12,7 @@ Meteor.startup(() => {
 });
 
 let timestamp;
-Tracker.autorun(() => {
+Tracker.autorun(async () => {
   Meteor.subscribe("timestamp");
   let locale = reactiveLocale.get();
 
@@ -20,7 +20,8 @@ Tracker.autorun(() => {
 
   if (timestamp !== undefined && timestamp !== newTimestamp) {
     if (locale) {
-      i18n.loadLocale(locale, { fresh: true });
+      await i18n.loadLocale(locale, { fresh: true });
+      storeLocale.set(locale);
     }
   }
   timestamp = newTimestamp;
