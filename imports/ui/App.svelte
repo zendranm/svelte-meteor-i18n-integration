@@ -1,22 +1,20 @@
 <script>
   import { t, locale, reactiveLocale } from "../utils/i18n";
-  import { i18n } from "meteor/universe:i18n";
+  import { Meteor } from "meteor/meteor";
 
   const setLanguage = (language) => {
     reactiveLocale.set(language);
   };
+
+  let localeToUpdate = "";
+  let keyToUpdate = "";
+  let valueToUpdate = "";
 </script>
 
 <div class="container">
   <h1>Welcome to Meteor!</h1>
   <button on:click={() => setLanguage("en")}>EN</button>
   <button on:click={() => setLanguage("es")}>ESP</button>
-  <button
-    on:click={() => {
-      i18n.loadLocale("es", { fresh: true });
-      console.log(i18n._translations);
-    }}>Get Locale</button
-  >
 
   <div>
     Locale: {$locale}
@@ -28,4 +26,21 @@
     apple: {$t("apple")}
   </div>
   <br />
+  Locale to update:
+  <input placeholder="e.g. es" bind:value={localeToUpdate} /><br />
+  Key to update:
+  <input placeholder="e.g. apple" bind:value={keyToUpdate} /><br />
+  New value:
+  <input placeholder="e.g. Green apple" bind:value={valueToUpdate} /><br />
+  <button
+    on:click={() => {
+      const newTranslation = {};
+      newTranslation[keyToUpdate] = valueToUpdate;
+
+      Meteor.call("translations.updateTranslation", {
+        translationId: localeToUpdate,
+        newTranslation: newTranslation,
+      });
+    }}>Update</button
+  >
 </div>
