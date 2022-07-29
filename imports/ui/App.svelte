@@ -1,6 +1,7 @@
 <script>
-  import { t, locale, reactiveLocale } from "../utils/i18n";
+  import { t, locale } from "../utils/i18n";
   import { Meteor } from "meteor/meteor";
+  import { reactiveLocale } from "../../client/main";
 
   const setLanguage = (language) => {
     reactiveLocale.set(language);

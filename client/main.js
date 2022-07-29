@@ -3,13 +3,16 @@ import App from "../imports/ui/App.svelte";
 import { Tracker } from "meteor/tracker";
 import { Translations } from "../imports/api/TranslationsCollection";
 import { i18n } from "meteor/universe:i18n";
-import { reactiveLocale, locale as storeLocale } from "../imports/utils/i18n";
+import { locale as storeLocale } from "../imports/utils/i18n";
+import { ReactiveVar } from "meteor/reactive-var";
 
 Meteor.startup(() => {
   new App({
     target: document.getElementById("app"),
   });
 });
+
+export const reactiveLocale = new ReactiveVar("en");
 
 let latestTranslations = new Map([]);
 Tracker.autorun(async () => {

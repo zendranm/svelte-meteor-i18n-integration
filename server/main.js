@@ -39,6 +39,7 @@ Meteor.startup(() => {
   Translations.find().observeChanges({ added: refresh, changed: refresh });
 });
 
+// This is just an example, this method should check user's permissions.
 Meteor.methods({
   "translations.updateTranslation"({ translationId, newTranslation }) {
     const inDB = Translations.findOne({ _id: translationId });
