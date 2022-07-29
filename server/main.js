@@ -29,10 +29,21 @@ const insertTranslation = (translations) => {
   });
 };
 
+const insertTimestamp = (translations) => {
+  Timestamp.insert({
+    _id: Object.keys(translations)[0],
+    updatedAt: new Date(),
+  });
+};
+
 Meteor.startup(() => {
   // code to run on server at startup
   if (Translations.find().count() === 0) {
     [en, es].forEach(insertTranslation);
+  }
+
+  if (Timestamp.find().count() === 0) {
+    [en, es].forEach(insertTimestamp);
   }
 });
 
@@ -53,6 +64,7 @@ function onStartupAsync(fn) {
 
 function refresh(locale, { translations = {}, updatedAt = new Date() }) {
   locale = i18n.normalize(locale);
+  if (Object.keys(translations).length === 0) return;
   i18n._translations[locale] = translations;
 
   const cache = i18n.getCache(locale);
@@ -60,7 +72,7 @@ function refresh(locale, { translations = {}, updatedAt = new Date() }) {
   delete cache._json;
   delete cache._yml;
   i18n._emitChange(locale);
-  Timestamp.upsert({}, { updatedAt });
+  Translations.update({ _id: locale }, { $set: { updatedAt: updatedAt } });
 }
 
 const mergeTranslations = (baseTranslations, translation) => {
